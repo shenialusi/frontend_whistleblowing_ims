@@ -3,8 +3,8 @@ import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { url } from 'inspector';
 import Modal from "./Modal";
-import { useState } from 'react';
 import Header from './components/header';
+import { useState, useRef, useEffect } from 'react';
 
 export default function Home() {
 
@@ -22,7 +22,7 @@ export default function Home() {
   const [isOpen11, setIsOpen11] = useState(false);
   const [isOpen12, setIsOpen12] = useState(false);
   const [isOpen13, setIsOpen13] = useState(false);
-
+  
   const tabs = [
     {
       name: 'Telp',
@@ -349,8 +349,8 @@ export default function Home() {
           <div className='flex justify-between text-white'>
             <div><img className='h-14 w-auto logo-menu-bawah bg-white' src="./logo.png" alt="" /></div>
             <div>
-              <a href='' className='text2-menu-bawah mr-5 font-bold'>Beranda</a>
-              <a href='' className='text2-menu-bawah mr-5 font-bold'>Report</a>
+              <a href='/page' className='text2-menu-bawah mr-5 font-bold'>Beranda</a>
+              <a href='/report/buat-laporan' className='text2-menu-bawah mr-5 font-bold'>Report</a>
               <a href='/faq' className='text2-menu-bawah mr-5 font-bold'>FAQ</a>
             </div>
           </div>

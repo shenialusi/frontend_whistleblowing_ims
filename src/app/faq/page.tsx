@@ -7,44 +7,74 @@ import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { Fragment } from 'react';
 import { url } from 'inspector';
 import Header from '../components/header';
+import axios, {AxiosError} from 'axios';
+
+interface FAQ {
+  question: string;
+  answered: string;
+}
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [open, setOpen] = useState(false);
-  const faqs = [
-    {
-      question: 'Apakah video gratis tersedia ?',
-      answered: 'Tentu saja. Video yang berbayar bertanda icon rocket. Jika tidak ada tanda, video itu gratis.'
-    },
-    {
-      question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
-      answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
-    },
-    {
-      question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
-      answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
-    },
-    {
-      question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
-      answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
-    },
-    {
-      question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
-      answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
-    },
-    {
-      question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
-      answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
-    },
-    {
-      question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
-      answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
-    },
-    {
-      question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
-      answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
-    },
-  ];
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+
+  useEffect(()=>{
+    const fetchData = async () => {
+      const result = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/faq").then((res) => {
+        var arr_faq: FAQ[] = []
+        res.data.data.forEach((e: any) => {
+          arr_faq.push({
+            "question": e.pertanyaan,
+            "answered": e.jawaban,
+          })
+        });
+
+        setFaqs(arr_faq);
+      }).catch(
+        (e: Error | AxiosError) => console.log(e)
+      );
+    }
+
+    fetchData();
+  }, []);
+
+  
+
+  // const faqs = [
+  //   {
+  //     question: 'Apakah video gratis tersedia ?',
+  //     answered: 'Tentu saja. Video yang berbayar bertanda icon rocket. Jika tidak ada tanda, video itu gratis.'
+  //   },
+  //   {
+  //     question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
+  //     answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
+  //   },
+  //   {
+  //     question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
+  //     answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
+  //   },
+  //   {
+  //     question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
+  //     answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
+  //   },
+  //   {
+  //     question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
+  //     answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
+  //   },
+  //   {
+  //     question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
+  //     answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
+  //   },
+  //   {
+  //     question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
+  //     answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
+  //   },
+  //   {
+  //     question: 'Bagaimana cara nonton video gratis mau pun berbayar ?',
+  //     answered: ' Dari kedua sisi baik gratis mau pun berbayar, Anda tetap harus login jika ingin menonton video. ',
+  //   },
+  // ];
 
   interface ItemProps {
     q: string; // Tipe data q diubah menjadi string
