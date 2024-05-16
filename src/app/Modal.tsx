@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 
 interface ModalProps {
-    open: boolean;
-    children: ReactNode;
-    onClose: () => void;
+  open: boolean;
+  children: ReactNode;
+  onClose: () => void;
 }
 
 const Modal: FC<ModalProps> = ({ open, children, onClose }) => {
@@ -24,18 +24,18 @@ const Modal: FC<ModalProps> = ({ open, children, onClose }) => {
           aria-modal="true"
           aria-labelledby="modal-headline"
         >
-            <div className='w-full p-5'>
-                    <button type="button" className="ml-3 text-gray-700 hover:text-gray-500 float-right" onClick={onClose}>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                    </button>
-            </div>
-            <div className='w-full float-none p-5'>
-                    {children}
-            </div>
+          <div className='w-full p-5'>
+            <button type="button" className="ml-3 text-gray-700 hover:text-gray-500 float-right" onClick={onClose}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className='w-full float-none p-5'>
+            {children}
           </div>
         </div>
+      </div>
     </div>
   );
 }
