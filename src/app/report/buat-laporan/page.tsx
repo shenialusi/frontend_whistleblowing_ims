@@ -1,13 +1,26 @@
 "use client"
-import { useState } from "react";
+import { useState, useRef, useEffect } from 'react';
 import Header from "../../components/header";
+import axios, { AxiosError } from 'axios';
+
+interface RuangLingkup {
+    namaruanglingkup: string;
+    deskripsi: string;
+    id: number;
+}
+
+interface MappingPertanyaan {
+    ruanglingkupid: number;
+    namapertanyaan: string;
+    jawaban: string;
+}
 
 const BuatLaporan = () => {
+    const [ruanglingkup, setRuangLingkup] = useState<RuangLingkup[]>([]);
+    const [mappingpertanyaan, setMappingPertanyaan] = useState<MappingPertanyaan[]>([]);
     const [isAnonymous, setIsAnonymous] = useState(true);
     const [selectedButton, setSelectedButton] = useState(null);
-    const tipekejadian = ['Benturan Kepentingan', 'Korupsi', 'Kecurangan', 'Gratifikasi', 'Penyalahgunaan Jabatan', 'Pembocoran Rahasia', 'Penggelapan Aset', 'Pemerasan', 'Pelanggaran Etika dan Perbuatan Asusila', 'Penipuan', 'Pencurian', 'Penyelewengan Uang Perseroan', 'Penyalahgunaan dan Pemalsuan Data'];
-
-    const handleButtonClick = (index) => {
+    const handleButtonClick = (index: any) => {
         setSelectedButton(index);
     };
 
@@ -20,6 +33,51 @@ const BuatLaporan = () => {
     const closeModal = () => {
         setIsOpen(false);
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/ruang-lingkup").then((res) => {
+                var arr_page: RuangLingkup[] = []
+                res.data.data.forEach((e: any) => {
+                    arr_page.push({
+                        "namaruanglingkup": e.nama_ruang_lingkup,
+                        "deskripsi": e.deskripsi,
+                        "id": e.id,
+                    })
+                });
+
+                setRuangLingkup(arr_page);
+            }).catch(
+                (e: Error | AxiosError) => console.log(e)
+            );
+        }
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (selectedButton != null) {
+            const fetchData = async () => {
+                const result = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/mapping-pertanyaan/" + selectedButton).then((res) => {
+                    var arr_page: MappingPertanyaan[] = []
+                    res.data.data.forEach((e: any) => {
+                        arr_page.push({
+                            "ruanglingkupid": e.m_ruang_lingkup_id,
+                            "namapertanyaan": e.nama_pertanyaan,
+                            "jawaban": "",
+                        })
+                    });
+
+                    setMappingPertanyaan(arr_page);
+                }).catch(
+                    (e: Error | AxiosError) => console.log(e)
+                );
+            }
+
+            fetchData();
+        }
+    }, [selectedButton]);
+
 
     return (
         <main>
@@ -95,156 +153,29 @@ const BuatLaporan = () => {
                         <div className="w-full mt-6">
                             <h2 className="buat-laporan-text1 text-xl font-bold mb-2">Tipe Insiden</h2>
                             <p className="buat-laporan-text2 mb-2">Silahkan Pilih tipe insiden yang paling mendekati masalah yang Anda laporkan</p>
-                            {tipekejadian.map((name, index) => (
+                            {ruanglingkup.map((item, index) => (
                                 <button
-                                    key={index}
-                                    className={`w-2/6 ${selectedButton === index ? 'bg-sky-600 text-white' : ''}`}
-                                    onClick={() => handleButtonClick(index)}
+                                    key={item.id}
+                                    className={`w-2/6 ${selectedButton === item.id ? 'bg-sky-600 text-white' : ''}`}
+                                    onClick={() => handleButtonClick(item.id)}
                                 >
-                                    <p className="buat-laporan-text2 btn text-center border p-5 flex-grow">{name}</p>
+                                    <p className="buat-laporan-text2 btn text-center border p-5 flex-grow">{item.namaruanglingkup}</p>
                                 </button>
                             ))}
                         </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Kejadian yang ingin dilaporkan?</p>
+                        {mappingpertanyaan.map((item, index) => (
+                            <div className="w-full mt-6">
+                                <div className="w-full mb-6">
+                                    <p className="buat-laporan-text2 text-black font-semibold">{item.namapertanyaan}</p>
+                                </div>
+                                <div className="w-full">
+                                    <input type="text" className="border w-full p-2" />
+                                </div>
                             </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Siapa nama dan jabatan terlapor?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Dimana kejadian ini terjadi?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Kapan kejadian ini terjadi?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah ada orang lain yang terlibat?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah ada saksi mata?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah tindakan lanjut akan mengidentifikasikan Anda sebagai pelapor?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah kejadian ini mengakibatkan kerugian finansial? Jika ya, berapa besar jumlahnya?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah kejadian ini pernah terjadi sebelumnya?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah sudah dilaporkan melalui sarana lain? Jika iya, apa tanggapannya?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah sudah berbicara dengan terlapor?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah sudah dilaporkan ke polisi/pihak berwajib?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Menurut perkiraan Anda, seberapa besar jumlah uang yang terlibat?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Bagaimana Anda mengetahui kejadian ini?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Apakah kejadian ini akan terulang lagi?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Menurut perkiraan Anda, seberapa besar nilai gratifikasi yang terlibat?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-6">
-                            <div className="w-full mb-6">
-                                <p className="buat-laporan-text2 text-black font-semibold">Menurut perkiraan Anda, seberapa besar kerugian finansial yang terjadi?</p>
-                            </div>
-                            <div className="w-full">
-                                <input type="text" className="border w-full p-2" />
-                            </div>
-                        </div>
+                        ))}
                         <div className="w-full mt-6">
                             <h2 className="buat-laporan-text1 text-xl font-bold mb-2">Lampiran</h2>
                             <p className="buat-laporan-text2 mb-2 text-justify">Silahkan tambahkan lampiran yang menurut Anda dapat memberikan penjelasan lebih lanjut atas pengungkapan ini, harap berhati-hati untuk tidak memasukkan informasi yang dapat mengungkapkan identitas Anda jika Anda ingin mengaku sebagai anonim. Anda dapat melampirkan data apa saja hingga 25MB.</p>
-                            <input type="file" />
                         </div>
 
                         <button

@@ -148,7 +148,6 @@ const StatistikPage = () => {
                                         ))}
                                     </select>
                                 </div>
-
                             </form>
                         </div>
                     </div>
